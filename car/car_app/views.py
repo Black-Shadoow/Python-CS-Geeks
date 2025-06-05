@@ -11,21 +11,29 @@
 #     }
 #     return JsonResponse(data)
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse  # Corrected: HttpResponse was misspelled and not imported
 from .models import Carlist
+import json  # Required for json.dumps
 
+# View to list all cars
 def car_list_view(request):
     cars = Carlist.objects.all()
     data = {
         'cars': list(cars.values())
     }
-    return JsonResponse(data,json_dumps_params={'indent': 4})
+    data_json = json.dumps(data, indent=4)  # Optional: formatted JSON
+    return HttpResponse(data_json, content_type='application/json')  # Corrected: HttpResponse spelling
 
-def car_list_detail(request,pk):
-    car=Carlist.objects.get(pk=pk)
-    data={
-        'name':car.name,
-        'desc':car.desc,
-        'active':car.active,
-    }
-    return JsonResponse(data,json_dumps_params={'indent': 4})
+# View to get a single car by primary key (pk)
+def car_list_detail(request, pk):
+    try:
+        car = Carlist.objects.get(pk=pk)
+        data = {
+            'name': car.name,
+            'desc': car.desc,
+            'active': car.active,
+        }
+    except Carlist.DoesNotExist:
+        return JsonResponse({'error': 'Car not found'}, status=404)
+
+    return JsonResponse(data, json_dumps_params={'indent': 4})
