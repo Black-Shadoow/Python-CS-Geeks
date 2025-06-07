@@ -41,19 +41,55 @@ import json  # Required for json.dumps
 
 from django.http import JsonResponse, HttpResponse  
 from .models import Carlist
-from .api_file.serializer import CarSerializer  # Corrected import
-
+from .api_file.serializer import CarSerializer 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.response import Response
 
-@api_view(['GET'])  # Optional: specify method(s)
+
+
+
+@api_view(['GET','POST','DELETE'])  
 def car_list_view(request):
-    cars = Carlist.objects.all()
-    serializer = CarSerializer(cars, many=True)  # many=True because it's a queryset
-    return Response(serializer.data)
+    if request.method=='GET':
+        try:
+            cars = Carlist.objects.all()
+        except:
+            return Response({'Error':'car not found'},status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = CarSerializer(cars, many=True)  # many=True because it's a queryset
+        return Response(serializer.data)
+    if request.method=='POST':
+        serializer=CarSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+        
+    
 
 @api_view()  
-def car_list_detail(request, pk):  # ✅ FIXED: added 'request' and 'pk' to parameters
-    car = Carlist.objects.get(pk=pk)  # ✅ FIXED: corrected arguments to .get()
-    serializer = CarSerializer(car)
-    return Response(serializer.data)
+def car_list_detail(request, pk):  
+    if request.method=='GET':
+        car = Carlist.objects.get(pk=pk)  
+        serializer = CarSerializer(car)
+        return Response(serializer.data)
+    if request.method=='PUT':
+        car = Carlist.objects.get(pk=pk) 
+        serializer=serializer(car, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+    if request.method=='DELETE':
+        car = Carlist.objects.get(pk=pk) 
+        car.delete()
+        return Response({"message": "Car deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+        
+
+
+
