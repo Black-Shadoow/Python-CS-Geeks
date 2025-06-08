@@ -18,6 +18,30 @@ class ShowroomView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class Showroom_details(APIView):
+    def get(self, request, pk):
+        try:
+            showroom = Showroom.objects.get(pk=pk)
+        except Showroom.DoesNotExist:
+            return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+        serializer = ShowroomSerializer(showroom)
+        return Response(serializer.data)
+
+        
+    def put(self,request,pk):
+        showrooms = Showroom.objects.get(pk=pk)
+        serializer=ShowroomSerializer(Showroom,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors,status=status.HTTP_404_NOT_FOUND)
+    def delete(self,request,pk):
+        showroom=Showroom.objects.get(pk=pk)
+        showroom.delete()
+        return Response({"message": "Showroom deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['GET', 'POST'])  
 def car_list_view(request):
@@ -53,5 +77,6 @@ def car_list_detail(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
+        car=Carlist.objects.get(pk=pk)
         car.delete()
         return Response({"message": "Car deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
