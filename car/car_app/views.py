@@ -1,8 +1,23 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView  # <-- correct import
 from rest_framework import status
-from .models import Carlist
-from .api_file.serializer import CarSerializer
+from .models import Carlist, Showroom  # model names should start with capital letters
+from .api_file.serializer import CarSerializer, ShowroomSerializer  # serializer names should be capitalized
+
+class ShowroomView(APIView):
+    def get(self, request):
+        showrooms = Showroom.objects.all()
+        serializer = ShowroomSerializer(showrooms, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ShowroomSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'POST'])  
 def car_list_view(request):

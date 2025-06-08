@@ -10,5 +10,6 @@ from . import views
 
 urlpatterns = [
     path('list', views.car_list_view, name='list'),
-    path('<int:pk>', views.car_list_detail, name='car_detail')
+    path('<int:pk>', views.car_list_detail, name='car_detail'),
+    path('showroom', views.ShowroomView.as_view(), name='ShowroomView'),
 ]

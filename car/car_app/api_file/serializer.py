@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Carlist
+from ..models import Carlist, Showroom 
 
 # def alpanumeric(value):
 #     if not str(value).isalnum():
@@ -34,7 +34,12 @@ from ..models import Carlist
     #         raise serializers.ValidationError("Name and description must be different.")
     #     return data
 from rest_framework import serializers
+from ..models import Showroom, Carlist
 
+class ShowroomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Showroom 
+        fields = '__all__'
 
 class CarSerializer(serializers.ModelSerializer):
     discount_price = serializers.SerializerMethodField()
@@ -48,10 +53,11 @@ class CarSerializer(serializers.ModelSerializer):
 
     def validate_price(self, value):
         if value <= 20000.00:
-            raise serializers.ValidationError("Price must be greater than 20000.00")  # typo in original
+            raise serializers.ValidationError("Price must be greater than 20000.00")
         return value
 
     def validate(self, data):
         if data['name'] == data['desc']:
             raise serializers.ValidationError("Name and description must be different.")
         return data
+
