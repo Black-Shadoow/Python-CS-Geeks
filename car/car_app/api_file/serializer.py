@@ -33,17 +33,24 @@ from ..models import Carlist
     #     if data['name'] == data['desc']:
     #         raise serializers.ValidationError("Name and description must be different.")
     #     return data
-class CarSerializer(serializers.ModelSerializer): #using model serializer
+from rest_framework import serializers
+
+
+class CarSerializer(serializers.ModelSerializer):
+    discount_price = serializers.SerializerMethodField()
+
     class Meta:
-        model=Carlist
-        fields="__all__"
-        #fields=['name','name','desc','']
-    def validate_price(self, value):  #field validators 
-        if value<=20000.00:
-            raise serializers.ValidationError("Price must be greater than 200000")
+        model = Carlist
+        fields = '__all__'
+
+    def get_discount_price(self, obj):
+        return obj.price - 500
+
+    def validate_price(self, value):
+        if value <= 20000.00:
+            raise serializers.ValidationError("Price must be greater than 20000.00")  # typo in original
         return value
-    
-       # object level validation 
+
     def validate(self, data):
         if data['name'] == data['desc']:
             raise serializers.ValidationError("Name and description must be different.")
