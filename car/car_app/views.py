@@ -4,11 +4,10 @@ from rest_framework.views import APIView  # <-- correct import
 from rest_framework import status
 from .models import Carlist, Showroom  # model names should start with capital letters
 from .api_file.serializer import CarSerializer, ShowroomSerializer  # serializer names should be capitalized
-
 class ShowroomView(APIView):
     def get(self, request):
         showrooms = Showroom.objects.all()
-        serializer = ShowroomSerializer(showrooms, many=True,context={'request':request})
+        serializer = ShowroomSerializer(showrooms, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request):

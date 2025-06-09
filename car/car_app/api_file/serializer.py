@@ -1,62 +1,16 @@
+
 from rest_framework import serializers
-from ..models import Carlist, Showroom 
+from ..models import Carlist, Review, Showroom
 
-# def alpanumeric(value):
-#     if not str(value).isalnum():
-#         raise serializers.ValidationError("Only alpha numric charaters are required")
-#class CarSerializer(serializers.Serializer): 
-    # id = serializers.IntegerField(read_only=True)
-    # name= serializers.CharField()
-    # desc=serializers.CharField()
-    # status=serializers.BooleanField(read_only=True)
-    # vechile=serializers.CharField(validators=[alpanumeric])
-    # price=serializers.DecimalField(max_digits=9,decimal_places=2)
-
-    # def create(self, validated_data):
-    #     return Carlist.objects.create(**validated_data)
-    
-    # def update(self, instance, validated_data):
-    #     instance.name=validated_data.get('name',instance.name)
-    #     instance.desc=validated_data.get('desc', instance.desc)
-    #     instance.active=validated_data.get('active', instance.active)  #instance mean previous data 
-    #     instance.vehiclenum=validated_data.get('vehiclenum',instance.vehiclenum) 
-    #     instance.price=validated_data.get('price',instance.price)
-    #     instance.save()
-    #     return instance
-    #     def validate_price(self, value):  #field validators 
-    #     if value<=20000.00:
-    #         raise serializers.ValidationError("Price must be greater than 200000")
-    #     return value
-    
-    #    # object level validation 
-    # def validate(self, data):
-    #     if data['name'] == data['desc']:
-    #         raise serializers.ValidationError("Name and description must be different.")
-    #     return data
-from rest_framework import serializers
-from ..models import Showroom, Carlist
-
-# class ShowroomSerializer(serializers.ModelSerializer):
-#     showroom=
-#     class Meta:
-#         model = Showroom 
-#         fields = '__all__'
-class ShowroomSerializer(serializers.ModelSerializer):
-    # Showrooms = CarSerializer(many=True ,read_only=True)
-    # Showrooms = serializers.StringRelatedField(many=True)
-    # Showrooms = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    Showrooms = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='car_detail'
-    )
-
+# Review Serializer
+class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Showroom
-        fields = "__all__"
-
+        model = Review  
+        fields = '__all__'
+# Car Serializer
 class CarSerializer(serializers.ModelSerializer):
     discount_price = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()  
 
     class Meta:
         model = Carlist
@@ -64,6 +18,10 @@ class CarSerializer(serializers.ModelSerializer):
 
     def get_discount_price(self, obj):
         return obj.price - 500
+
+    def get_reviews(self, obj):  
+        reviews = Review.objects.filter(car=obj)
+        return ReviewSerializer(reviews, many=True).data
 
     def validate_price(self, value):
         if value <= 20000.00:
@@ -74,4 +32,7 @@ class CarSerializer(serializers.ModelSerializer):
         if data['name'] == data['desc']:
             raise serializers.ValidationError("Name and description must be different.")
         return data
-
+class ShowroomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Showroom
+        fields = '__all__'
