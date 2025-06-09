@@ -36,10 +36,24 @@ from ..models import Carlist, Showroom
 from rest_framework import serializers
 from ..models import Showroom, Carlist
 
+# class ShowroomSerializer(serializers.ModelSerializer):
+#     showroom=
+#     class Meta:
+#         model = Showroom 
+#         fields = '__all__'
 class ShowroomSerializer(serializers.ModelSerializer):
+    # Showrooms = CarSerializer(many=True ,read_only=True)
+    # Showrooms = serializers.StringRelatedField(many=True)
+    # Showrooms = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    Showrooms = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='car_detail'
+    )
+
     class Meta:
-        model = Showroom 
-        fields = '__all__'
+        model = Showroom
+        fields = "__all__"
 
 class CarSerializer(serializers.ModelSerializer):
     discount_price = serializers.SerializerMethodField()

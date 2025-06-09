@@ -8,7 +8,7 @@ from .api_file.serializer import CarSerializer, ShowroomSerializer  # serializer
 class ShowroomView(APIView):
     def get(self, request):
         showrooms = Showroom.objects.all()
-        serializer = ShowroomSerializer(showrooms, many=True)
+        serializer = ShowroomSerializer(showrooms, many=True,context={'request':request})
         return Response(serializer.data)
 
     def post(self, request):

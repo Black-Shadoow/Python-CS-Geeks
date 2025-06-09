@@ -14,8 +14,12 @@ class Showroom(models.Model):  # Capital S
         return self.name
 
 class Carlist(models.Model):
-    name = models.CharField(max_length=100)
-    desc = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)  
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+    active = models.BooleanField(default=False)
+    chassisnumber = models.CharField(max_length=100, blank=True, null=True)
+    price = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True)
+    showroom = models.ForeignKey(Showroom, on_delete=models.CASCADE, related_name="showroom")
+
     def __str__(self):
         return self.name
