@@ -4,13 +4,15 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .models import Carlist, Showroom  
 from .api_file.serializer import CarSerializer, ShowroomSerializer  
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import BasicAuthentication,SessionAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 class ShowroomView(APIView):
-    authentication_classes=[BasicAuthentication]
+    #authentication_classes=[BasicAuthentication]
     #permission_classes=[IsAuthenticated]
     #permission_classes=[AllowAny] # allow everyone 
-    permission_classes=[IsAdminUser]
+    #permission_classes=[IsAdminUser]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
     def get(self, request):
