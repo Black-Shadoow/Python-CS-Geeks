@@ -1,4 +1,11 @@
-
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView  
+from rest_framework import status
+from .models import Carlist, Showroom ,Review 
+from .api_file.serializer import CarSerializer, ShowroomSerializer ,ReviewSerializer
+from rest_framework.authentication import BasicAuthentication,SessionAuthentication
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 #from rest_framework import mixins, 
 # from rest_framework import generics
 # from rest_framework.permissions import DjangoModelPermissions
@@ -18,25 +25,6 @@
 #     def post(self, request, *args, **kwargs):
 #         return self.create(request, *args, **kwargs)
 
-
-
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.views import APIView  
-from rest_framework import status
-from .models import Carlist, Showroom ,Review 
-from .api_file.serializer import CarSerializer, ShowroomSerializer ,ReviewSerializer
-from rest_framework.authentication import BasicAuthentication,SessionAuthentication
-from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
-from rest_framework import generics
-
-#concreate class view used as altenative of mixing
-class ReviewList(generics.ListCreateAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
 class ShowroomView(APIView):
     #authentication_classes=[BasicAuthentication]
     #permission_classes=[IsAuthenticated]
