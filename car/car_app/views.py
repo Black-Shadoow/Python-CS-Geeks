@@ -1,10 +1,18 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.views import APIView  # <-- correct import
+from rest_framework.views import APIView  
 from rest_framework import status
-from .models import Carlist, Showroom  # model names should start with capital letters
-from .api_file.serializer import CarSerializer, ShowroomSerializer  # serializer names should be capitalized
+from .models import Carlist, Showroom  
+from .api_file.serializer import CarSerializer, ShowroomSerializer  
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 class ShowroomView(APIView):
+    authentication_classes=[BasicAuthentication]
+    #permission_classes=[IsAuthenticated]
+    #permission_classes=[AllowAny] # allow everyone 
+    permission_classes=[IsAdminUser]
+
+
     def get(self, request):
         showrooms = Showroom.objects.all()
         serializer = ShowroomSerializer(showrooms, many=True, context={'request': request})
