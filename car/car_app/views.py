@@ -2,10 +2,28 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView  
 from rest_framework import status
-from .models import Carlist, Showroom  
-from .api_file.serializer import CarSerializer, ShowroomSerializer  
+from .models import Carlist, Showroom ,Review 
+from .api_file.serializer import CarSerializer, ShowroomSerializer ,ReviewSerializer
 from rest_framework.authentication import BasicAuthentication,SessionAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
+from rest_framework import mixins, generics
+from rest_framework.permissions import DjangoModelPermissions
+
+class ReviewList(mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 generics.GenericAPIView):
+    
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [DjangoModelPermissions] 
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
 class ShowroomView(APIView):
     #authentication_classes=[BasicAuthentication]
     #permission_classes=[IsAuthenticated]
