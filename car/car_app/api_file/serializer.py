@@ -1,25 +1,32 @@
-
 from rest_framework import serializers
-from ..models import Carlist, Review, Showroom
+from django.contrib.auth.models import User
+from ..models import Carlist, Review, Showroom  # or ..models if inside subfolder
 
-# Review Serializer
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Review  
+        model = Review
         fields = '__all__'
-# Car Serializer
+
+
 class CarSerializer(serializers.ModelSerializer):
     discount_price = serializers.SerializerMethodField()
-    reviews = serializers.SerializerMethodField()  
+    reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = Carlist
         fields = '__all__'
 
     def get_discount_price(self, obj):
-        return obj.price - 500
+        return max(obj.price - 500, 0)
 
-    def get_reviews(self, obj):  
+    def get_reviews(self, obj):
         reviews = Review.objects.filter(car=obj)
         return ReviewSerializer(reviews, many=True).data
 
@@ -29,9 +36,11 @@ class CarSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        if data['name'] == data['desc']:
+        if data.get('name') == data.get('desc'):
             raise serializers.ValidationError("Name and description must be different.")
         return data
+
+
 class ShowroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Showroom
